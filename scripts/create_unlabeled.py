@@ -35,7 +35,7 @@ def get_class(serialized_example):
 
 def main(argv):
     argv.pop(0)
-    if any(not tf.gfile.Exists(f) for f in argv[1:]):
+    if any(not tf.io.gfile.Exists(f) for f in argv[1:]):
         raise FileNotFoundError(argv[1:])
     target = argv[0]
     input_files = argv[1:]
@@ -73,7 +73,7 @@ def main(argv):
     npos = np.zeros(nclass, np.int64)
     class_data = [[] for _ in range(nclass)]
     unlabel = []
-    tf.gfile.MakeDirs(os.path.dirname(target))
+    tf.io.gfile.MakeDirs(os.path.dirname(target))
     with tf.python_io.TFRecordWriter(target + '-unlabel.tfrecord') as writer_unlabel:
         pos, loop = 0, trange(count, desc='Writing records')
         for input_file in input_files:
@@ -95,7 +95,7 @@ def main(argv):
                 unlabel.append(p)
                 writer_unlabel.write(v)
         loop.close()
-    with tf.gfile.Open(target + '-unlabel.json', 'w') as writer:
+    with tf.io.gfile.Open(target + '-unlabel.json', 'w') as writer:
         writer.write(json.dumps(dict(distribution=train_stats.tolist(), indexes=unlabel), indent=2, sort_keys=True))
 
 
